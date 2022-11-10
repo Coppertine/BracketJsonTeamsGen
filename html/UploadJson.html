@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .upload-btn-wrapper {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif !important;
+    }
+
+    .btn {
+      border: 2px solid gray;
+      color: black;
+      background-color: #aaaa;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+    }
+
+    .btn[disabled] {
+      background-color: gray !important;
+      cursor: not-allowed;
+    }    
+
+    .upload-btn-wrapper:hover .btn {
+      background-color: #aaa;
+    }
+
+    .btn:hover {
+      background-color: #aaa;
+    }
+    
+    .btn[disabled]:hover {
+      background-color: gray;
+    }
+
+    .upload-btn-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+    }
+
+    #output {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <form onsubmit="uploadthis(this)">
+    <div class="upload-btn-wrapper">
+      <button class="btn">Upload bracket.json</button>
+      <input type="file" name="bracketFile" id="bracketUploadFile" accept=".json,text/json">
+      <span id="fileChosenTxt">No file chosen</span>
+    </div>
+    <input type="submit" class="btn" value="Submit">
+  </form>
+  <div id="output"></div>
+  <p>Bracket Team Seeding Generator<br>&copy; Coppertine, Sinsa</p>
+  <script>
+    function uploadthis(fileForm){
+        let version = true;
+        /* Need to check if we are in a Hitomi sheet.. for that.. I need to check if a spesific cell states something.. */
+        google.script.run.withFailureHandler((e) => {
+          document.getElementsByClassName("btn")[1].disabled = true;
+          document.getElementById("output").innerHTML = '<p>This script can only function in HitomiChan_\'s Stats Sheet, you can download here:<p><p><a href="https://drive.google.com/drive/folders/1o20TAh-EAKkd3X4RBFrcLVwunKd4yZCV">https://drive.google.com/drive/folders/1o20TAh-EAKkd3X4RBFrcLVwunKd4yZCV</a></p>';
+          version = false;
+         }).versionCheck();
+        
+        const file = fileForm.bracketFile.files[0];
+        const fr = new FileReader();
+        if(!version)
+          return;
+        fr.onload = function(e) {
+          const obj = {
+            mimeType: file.type,
+            bytes: [...new Int8Array(e.target.result)]
+          };
+          document.getElementById('output').innerHTML = "<p>Generating Players, this may take a while (aprox 1-5 min)...</p>";
+          google.script.run.withSuccessHandler((e) => updateUrl(e)).withFailureHandler((e) => errorShow(e)).uploadJson(obj);
+        };
+        fr.readAsArrayBuffer(file);
+      }
+      function updateUrl(url) {
+        document.getElementById('output').innerHTML = '<a href="' + url + '">Updated Bracket.json</a>';
+      }
+
+      function errorShow(e)
+      {
+        document.getElementById('output').innerHTML = '<p>Woops! Something went wrong...</p>';
+      }
+
+      document.getElementById("bracketUploadFile").addEventListener('change', function(){
+        document.getElementById("fileChosenTxt").textContent = this.files[0].name
+      });     
+  </script>
+</body>
+
+</html>
