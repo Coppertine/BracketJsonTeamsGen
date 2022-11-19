@@ -26,7 +26,7 @@ Ensure that the following dialog looks like below and hit Save.
 
 ![image](https://user-images.githubusercontent.com/37494321/201062444-61496512-054a-4548-bbe7-89ee3c711261.png)
 
-Refresh the page.
+Refresh the spreadsheet page.
 
 ## Usage
 ![image](https://user-images.githubusercontent.com/37494321/201076193-40f3b095-9df6-4da0-98f9-a62ac803ac2f.png)
